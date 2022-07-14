@@ -1,0 +1,61 @@
+{% extends 'default.html' %}
+
+
+{% block title %}
+{{ adv.header }}
+{% endblock title %}
+
+{% block content %}
+    <h3> {{ adv.header }}</h3>
+    <hr>
+    <table style="border-collapse: collapse; width: 100%;" border="1">
+        <tbody>
+            <tr>
+                <td>
+                    <p>Дата объявления: {{ adv.date_create|date:'d.m.Y H:i:s'}}</p>
+                </td>
+                <td>
+                    <p>Создал: {{ adv.user_id.username}}</p>
+                </td>
+                <td>
+                    <p>Категория: {{ adv.categories.name_category }}</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <p align="justify"> {{ adv.text|safe }}</p>
+    <hr>
+    {% if user.is_authenticated and user.id == adv.user_id.id %}
+        <button> <a href="{% url 'adv_edit' adv.pk %}"> Редактировать объявление </a> </button>
+        <button> <a href="{% url 'adv_delete' adv.pk %}"> Удалить объявление </a> </button>
+    {% else %}
+        {% if user.is_authenticated %}
+            <button> <a href="{% url 'response_add' adv.pk %}"> Добавить отклик </a> </button>
+        {% endif %}
+    {% endif %}
+    <hr>
+    {% if resp %}
+        <h3> Отклики на объявление: </h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Дата отклика</th>
+                    <th scope="col">Автор отклика</th>
+                    <th scope="col">Текст отклика</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in resp %}
+               <tr>
+                   <th>{{ p.date_create|date:'d.m.Y H:i:s' }}</th>
+                   <td>{{ p.user_id }}</a></td>
+                   <td>{{ p.text }}</td>
+               </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h3> Откликов пока нет... </h3>
+    {% endif %}
+{% endblock content %}
